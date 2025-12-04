@@ -1,0 +1,71 @@
+[package]
+name = "fusabi-stdlib-ext"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+description = "Extended standard library modules and domain packs for Fusabi"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/fusabi-lang/fusabi-stdlib-ext"
+documentation = "https://docs.rs/fusabi-stdlib-ext"
+readme = "README.md"
+keywords = ["fusabi", "stdlib", "modules", "scripting", "runtime"]
+categories = ["development-tools", "api-bindings", "filesystem"]
+
+[features]
+default = ["process", "fs", "path", "env", "format", "time"]
+
+# Core modules
+process = ["dep:tokio"]
+fs = []
+path = []
+env = []
+format = []
+net = ["dep:reqwest", "dep:tokio"]
+time = []
+metrics = ["dep:prometheus"]
+
+# Domain packs
+terminal-ui = ["dep:ratatui", "dep:crossterm"]
+observability = ["metrics", "dep:tracing", "dep:opentelemetry"]
+k8s = ["dep:kube", "dep:k8s-openapi", "dep:tokio"]
+mcp = ["dep:serde", "dep:serde_json"]
+
+# Safety controls
+sandbox = []
+
+[dependencies]
+fusabi-host = { path = "../fusabi-host", features = ["serde-support"] }
+thiserror = "1.0"
+tracing = "0.1"
+parking_lot = "0.12"
+
+# Optional module dependencies
+tokio = { version = "1.0", features = ["process", "fs", "time", "rt-multi-thread"], optional = true }
+reqwest = { version = "0.11", features = ["json"], optional = true }
+prometheus = { version = "0.13", optional = true }
+
+# Optional pack dependencies
+ratatui = { version = "0.26", optional = true }
+crossterm = { version = "0.27", optional = true }
+opentelemetry = { version = "0.22", optional = true }
+kube = { version = "0.88", optional = true }
+k8s-openapi = { version = "0.21", features = ["v1_28"], optional = true }
+serde = { version = "1.0", features = ["derive"], optional = true }
+serde_json = { version = "1.0", optional = true }
+
+[dev-dependencies]
+tokio = { version = "1.0", features = ["rt-multi-thread", "macros", "time", "fs", "process"] }
+tempfile = "3.10"
+tracing-subscriber = "0.3"
+
+[[example]]
+name = "process_module"
+required-features = ["process"]
+
+[[example]]
+name = "fs_module"
+required-features = ["fs"]
+
+[[example]]
+name = "net_module"
+required-features = ["net"]
