@@ -4,7 +4,7 @@
 
 use std::sync::Arc;
 
-use fusabi_host::engine::ExecutionContext;
+use fusabi_host::ExecutionContext;
 use fusabi_host::Value;
 
 use crate::safety::SafetyConfig;
@@ -71,7 +71,7 @@ pub fn cwd(
 mod tests {
     use super::*;
     use fusabi_host::Capabilities;
-    use fusabi_host::sandbox::{Sandbox, SandboxConfig};
+    use fusabi_host::{Sandbox, SandboxConfig};
     use fusabi_host::Limits;
 
     fn create_test_ctx() -> ExecutionContext {

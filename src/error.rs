@@ -72,6 +72,14 @@ pub enum Error {
     /// Internal error.
     #[error("internal error: {0}")]
     Internal(String),
+
+    /// Terminal UI error.
+    #[error("terminal UI error: {0}")]
+    TerminalUI(String),
+
+    /// Kubernetes error.
+    #[error("kubernetes error: {0}")]
+    K8s(String),
 }
 
 impl Error {

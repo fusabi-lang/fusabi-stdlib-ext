@@ -2,7 +2,7 @@
 
 use std::sync::Arc;
 
-use fusabi_host::engine::HostRegistry;
+use fusabi_host::HostRegistry;
 
 use crate::config::StdlibConfig;
 use crate::error::{Error, Result};

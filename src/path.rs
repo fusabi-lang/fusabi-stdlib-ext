@@ -4,7 +4,7 @@
 
 use std::path::{Path, PathBuf};
 
-use fusabi_host::engine::ExecutionContext;
+use fusabi_host::ExecutionContext;
 use fusabi_host::Value;
 
 /// Join path components.
@@ -117,7 +117,7 @@ pub fn is_absolute(
 mod tests {
     use super::*;
     use fusabi_host::Capabilities;
-    use fusabi_host::sandbox::{Sandbox, SandboxConfig};
+    use fusabi_host::{Sandbox, SandboxConfig};
     use fusabi_host::Limits;
 
     fn create_test_ctx() -> ExecutionContext {

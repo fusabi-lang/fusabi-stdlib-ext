@@ -2,7 +2,7 @@
 //!
 //! Provides string formatting and templating functions.
 
-use fusabi_host::engine::ExecutionContext;
+use fusabi_host::ExecutionContext;
 use fusabi_host::Value;
 
 /// Sprintf-style string formatting.
@@ -203,7 +203,7 @@ fn value_to_json_simple(value: &Value) -> String {
 mod tests {
     use super::*;
     use fusabi_host::Capabilities;
-    use fusabi_host::sandbox::{Sandbox, SandboxConfig};
+    use fusabi_host::{Sandbox, SandboxConfig};
     use fusabi_host::Limits;
 
     fn create_test_ctx() -> ExecutionContext {

@@ -5,7 +5,7 @@
 use std::sync::Arc;
 use std::time::Duration;
 
-use fusabi_host::engine::ExecutionContext;
+use fusabi_host::ExecutionContext;
 use fusabi_host::Value;
 
 use crate::error::{Error, Result};
@@ -107,7 +107,7 @@ impl Default for ExecOptions {
 mod tests {
     use super::*;
     use fusabi_host::Capabilities;
-    use fusabi_host::sandbox::{Sandbox, SandboxConfig};
+    use fusabi_host::{Sandbox, SandboxConfig};
     use fusabi_host::Limits;
 
     fn create_test_ctx() -> ExecutionContext {

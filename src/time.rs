@@ -4,7 +4,7 @@
 
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
-use fusabi_host::engine::ExecutionContext;
+use fusabi_host::ExecutionContext;
 use fusabi_host::Value;
 
 /// Get current Unix timestamp in seconds.
@@ -147,7 +147,7 @@ pub mod duration {
 mod tests {
     use super::*;
     use fusabi_host::Capabilities;
-    use fusabi_host::sandbox::{Sandbox, SandboxConfig};
+    use fusabi_host::{Sandbox, SandboxConfig};
     use fusabi_host::Limits;
 
     fn create_test_ctx() -> ExecutionContext {

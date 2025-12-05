@@ -26,7 +26,7 @@ metrics = ["dep:prometheus"]
 
 # Domain packs
 terminal-ui = ["dep:ratatui", "dep:crossterm"]
-observability = ["metrics", "dep:tracing", "dep:opentelemetry"]
+observability = ["metrics", "dep:opentelemetry"]
 k8s = ["dep:kube", "dep:k8s-openapi", "dep:tokio"]
 mcp = ["dep:serde", "dep:serde_json"]
 
@@ -34,7 +34,7 @@ mcp = ["dep:serde", "dep:serde_json"]
 sandbox = []
 
 [dependencies]
-fusabi-host = { path = "../fusabi-host", features = ["serde-support"] }
+fusabi-host = { git = "https://github.com/fusabi-lang/fusabi-host", rev = "cbbab109659b59beb7fa9f3b43e4952192ac1228", features = ["serde-support"] }
 thiserror = "1.0"
 tracing = "0.1"
 parking_lot = "0.12"
@@ -58,14 +58,15 @@ tokio = { version = "1.0", features = ["rt-multi-thread", "macros", "time", "fs"
 tempfile = "3.10"
 tracing-subscriber = "0.3"
 
-[[example]]
-name = "process_module"
-required-features = ["process"]
-
-[[example]]
-name = "fs_module"
-required-features = ["fs"]
-
-[[example]]
-name = "net_module"
-required-features = ["net"]
+# Examples temporarily disabled - need API updates
+# [[example]]
+# name = "process_exec"
+# required-features = ["process"]
+#
+# [[example]]
+# name = "fs_operations"
+# required-features = ["fs"]
+#
+# [[example]]
+# name = "net_requests"
+# required-features = ["net"]

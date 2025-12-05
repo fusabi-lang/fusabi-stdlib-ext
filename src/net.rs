@@ -5,7 +5,7 @@
 use std::sync::Arc;
 use std::time::Duration;
 
-use fusabi_host::engine::ExecutionContext;
+use fusabi_host::ExecutionContext;
 use fusabi_host::Value;
 
 use crate::safety::SafetyConfig;
@@ -195,7 +195,7 @@ fn extract_host(url: &str) -> fusabi_host::Result<String> {
 mod tests {
     use super::*;
     use fusabi_host::Capabilities;
-    use fusabi_host::sandbox::{Sandbox, SandboxConfig};
+    use fusabi_host::{Sandbox, SandboxConfig};
     use fusabi_host::Limits;
     use crate::safety::HostAllowlist;
 
