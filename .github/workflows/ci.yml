@@ -92,6 +92,26 @@ jobs:
         run: cargo doc --all-features --no-deps
         env:
           RUSTDOCFLAGS: -D warnings
+      - name: Check documentation structure
+        run: |
+          echo "Checking documentation structure..."
+
+          # Check required doc files exist
+          test -f docs/STRUCTURE.md || (echo "Missing docs/STRUCTURE.md" && exit 1)
+          test -f docs/RELEASE.md || (echo "Missing docs/RELEASE.md" && exit 1)
+          test -d docs/versions/vNEXT || (echo "Missing docs/versions/vNEXT" && exit 1)
+
+          # Check vNEXT has required files
+          test -f docs/versions/vNEXT/README.md || (echo "Missing docs/versions/vNEXT/README.md" && exit 1)
+          test -f docs/versions/vNEXT/API.md || (echo "Missing docs/versions/vNEXT/API.md" && exit 1)
+
+          echo "Documentation structure check passed!"
+      - name: Check for broken links in docs
+        run: |
+          echo "Checking for broken internal links..."
+          # Simple check for common broken link patterns
+          ! grep -r "](\.\..*MISSING" docs/ || (echo "Found broken links" && exit 1)
+          echo "Link check passed!"
 
   msrv:
     name: MSRV (1.75)

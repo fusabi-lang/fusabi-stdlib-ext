@@ -1,0 +1,34 @@
+# CODEOWNERS for fusabi-stdlib-ext
+#
+# This file defines code ownership for the repository.
+# Code owners are automatically requested for review when someone opens a pull request.
+#
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything in the repo
+* @fusabi-lang/core-maintainers
+
+# Release and CI workflows
+/.github/workflows/release.yml @fusabi-lang/release-team
+/.github/workflows/ci.yml @fusabi-lang/core-maintainers
+/Cargo.toml @fusabi-lang/release-team
+/CHANGELOG.md @fusabi-lang/release-team
+
+# Documentation
+/docs/ @fusabi-lang/docs-team
+/README.md @fusabi-lang/docs-team
+/docs/RELEASE.md @fusabi-lang/release-team
+
+# Core safety and security
+/src/safety.rs @fusabi-lang/security-team
+/src/config.rs @fusabi-lang/security-team
+
+# Module-specific ownership
+/src/terminal.rs @fusabi-lang/terminal-team
+/src/gpu.rs @fusabi-lang/gpu-team
+/src/net*.rs @fusabi-lang/networking-team
+/src/fs*.rs @fusabi-lang/filesystem-team
+
+# Examples and tests
+/examples/ @fusabi-lang/core-maintainers
+/tests/ @fusabi-lang/core-maintainers

@@ -2,6 +2,10 @@
 
 Extended standard library modules for the Fusabi scripting language ecosystem.
 
+> **Documentation**: See [versioned docs](docs/versions/vNEXT) for detailed API reference and guides.
+>
+> **Latest Release**: v0.1.0 | [Changelog](CHANGELOG.md) | [Release Process](docs/RELEASE.md)
+
 ## Overview
 
 `fusabi-stdlib-ext` provides optional, safety-first standard library modules for Fusabi host applications. All modules implement capability-based security with configurable allowlists and resource limits.
@@ -18,6 +22,13 @@ Extended standard library modules for the Fusabi scripting language ecosystem.
 - `net` - HTTP client (GET, POST)
 - `time` - Time and duration utilities
 - `metrics` - Counter, gauge, and histogram metrics
+
+### Extended Modules (vNEXT)
+
+- `terminal` - Terminal I/O: key events, selection, clipboard, palette helpers
+- `gpu` - GPU metrics: NVML/DGX metrics shims for observability
+- `fs_stream` - File streaming: tail files with backpressure
+- `net_http` - Enhanced HTTP: lightweight client with advanced timeout controls
 
 ### Pack Features
 
@@ -263,6 +274,23 @@ let safety = SafetyConfig::new()
     .with_default_timeout(Duration::from_secs(30))
     .with_max_timeout(Duration::from_secs(300));
 ```
+
+## Documentation
+
+- [Versioned API Docs](docs/versions/vNEXT) - Complete API reference for next version
+- [Documentation Structure](docs/STRUCTURE.md) - How documentation is organized
+- [Release Process](docs/RELEASE.md) - Release guidelines and procedures
+- [Examples](examples/) - Practical code examples
+
+## Contributing
+
+See [CODEOWNERS](.github/CODEOWNERS) for code ownership and review requirements.
+
+All contributions must:
+- Pass CI checks (tests, clippy, formatting)
+- Include tests for new functionality
+- Update documentation
+- Follow the safety-first design principles
 
 ## License
 
