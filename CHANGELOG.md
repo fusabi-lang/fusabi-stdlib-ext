@@ -1,0 +1,58 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+- **Documentation Infrastructure**:
+  - Added `docs/STRUCTURE.md` describing documentation organization
+  - Added `docs/RELEASE.md` with complete release process
+  - Created `docs/versions/vNEXT/` for versioned documentation
+  - Added documentation structure validation to CI pipeline
+
+- **Extended Modules** (Feature-flagged, stub implementations):
+  - `terminal` module: key events, clipboard access, ANSI colorization
+  - `gpu` module: NVML/DGX metrics (utilization, memory, temperature, power)
+  - `fs_stream` module: file tailing with backpressure, streaming reads
+  - `net_http` module: enhanced HTTP client with retries, streaming, custom options
+
+- **Release Infrastructure**:
+  - Enhanced `.github/workflows/release.yml` with comprehensive automation
+  - Added semantic version validation
+  - Added changelog extraction and GitHub release creation
+  - Added benchmark job for performance tracking
+  - Created `.github/CODEOWNERS` for code ownership and review requirements
+
+### Changed
+- Updated README with versioned docs links and new module descriptions
+- Enhanced CI workflow with documentation validation checks
+- Updated `Cargo.toml` with feature flags for new modules
+
+## [0.1.1] - 2025-12-05
+
+### Fixed
+- Fixed compilation issues for crates.io release
+- Switched to using fusabi-host from crates.io instead of git dependency
+
+### Added
+- Added initial release workflow for crates.io publishing
+
+## [0.1.0] - 2025-12-04
+
+### Added
+- Initial release of `fusabi-stdlib-ext`
+- Core standard library modules: `Process`, `Fs`, `Path`, `Env`, `Format`, `Net`, `Time`, `Metrics`
+- Domain-specific packs:
+  - `terminal-ui` (Ratatui/Crossterm integration)
+  - `observability` (Tracing/OpenTelemetry integration)
+  - `k8s` (Kubernetes client helpers)
+  - `mcp` (Model Context Protocol helpers)
+- Default-deny safety policies for filesystem and network access
+
+[Unreleased]: https://github.com/fusabi-lang/fusabi-stdlib-ext/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/fusabi-lang/fusabi-stdlib-ext/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/fusabi-lang/fusabi-stdlib-ext/releases/tag/v0.1.0
