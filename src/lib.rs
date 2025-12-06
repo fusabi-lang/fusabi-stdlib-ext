@@ -15,6 +15,13 @@
 //! - **Time** - Time and duration utilities
 //! - **Metrics** - Counter, gauge, histogram primitives
 //!
+//! ## Extended Modules
+//!
+//! - **Terminal** - Terminal I/O, key events, clipboard, colors
+//! - **GPU** - GPU metrics via NVML (utilization, memory, temperature)
+//! - **FsStream** - File streaming with backpressure (tail, chunked reads)
+//! - **NetHttp** - Enhanced HTTP client (retries, streaming, custom options)
+//!
 //! ## Domain Packs
 //!
 //! - **terminal-ui** - Ratatui/TUI widgets and helpers
@@ -75,6 +82,19 @@ pub mod time;
 
 #[cfg(feature = "metrics")]
 pub mod metrics;
+
+// Extended modules (vNEXT)
+#[cfg(feature = "terminal")]
+pub mod terminal;
+
+#[cfg(feature = "gpu")]
+pub mod gpu;
+
+#[cfg(feature = "fs_stream")]
+pub mod fs_stream;
+
+#[cfg(feature = "net_http")]
+pub mod net_http;
 
 // Domain packs
 #[cfg(feature = "terminal-ui")]
