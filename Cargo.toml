@@ -60,7 +60,7 @@ kube = { version = "0.88", optional = true }
 k8s-openapi = { version = "0.21", features = ["v1_28"], optional = true }
 serde = { version = "1.0", features = ["derive"], optional = true }
 serde_json = { version = "1.0", optional = true }
-sigilforge-client = { path = "../sigilforge-client", optional = true }
+sigilforge-client = { version = "0.1.2", optional = true }
 
 [dev-dependencies]
 tokio = { version = "1.0", features = ["rt-multi-thread", "macros", "time", "fs", "process"] }

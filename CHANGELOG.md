@@ -41,10 +41,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added benchmark job for performance tracking
   - Created `.github/CODEOWNERS` for code ownership and review requirements
 
+- **Sigilforge Integration** (Feature-flagged):
+  - `sigilforge` module: Integration with Sigilforge authentication daemon
+  - Now uses `sigilforge-client` from crates.io (v0.1.2)
+  - Provides `get_token`, `ensure_token`, `resolve`, and `is_available` functions
+
 ### Changed
 - Updated README with versioned docs links and new module descriptions
 - Enhanced CI workflow with documentation validation checks
 - Updated `Cargo.toml` with feature flags for new modules
+- Sigilforge feature now uses crates.io dependency instead of path dependency
 
 ## [0.1.1] - 2025-12-05
 

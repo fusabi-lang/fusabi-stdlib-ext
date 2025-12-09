@@ -65,15 +65,17 @@ pub fn request(args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
         .and_then(|v| v.as_str())
         .ok_or_else(|| Error::host_function("net_http.request: missing url argument"))?;
 
+    let empty_map = HashMap::new();
     let headers = args
         .get(2)
         .and_then(|v| v.as_map())
-        .unwrap_or(&HashMap::new());
+        .unwrap_or(&empty_map);
 
+    let empty_options = HashMap::new();
     let options = args
         .get(3)
         .and_then(|v| v.as_map())
-        .unwrap_or(&HashMap::new());
+        .unwrap_or(&empty_options);
 
     // Extract options
     let timeout = options

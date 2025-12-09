@@ -41,14 +41,13 @@ jobs:
           fi
 
       - name: Run tests
-        # Note: sigilforge feature excluded - requires path dependency not available in CI
-        run: cargo test --features "process,fs,path,env,format,net,time,metrics,terminal,gpu,fs_stream,net_http,terminal-ui,observability,k8s,mcp,sandbox"
+        run: cargo test --all-features
 
       - name: Run clippy
-        run: cargo clippy --features "process,fs,path,env,format,net,time,metrics,terminal,gpu,fs_stream,net_http,terminal-ui,observability,k8s,mcp,sandbox" -- -D warnings
+        run: cargo clippy --all-features -- -D warnings
 
       - name: Check documentation
-        run: cargo doc --features "process,fs,path,env,format,net,time,metrics,terminal,gpu,fs_stream,net_http,terminal-ui,observability,k8s,mcp,sandbox" --no-deps
+        run: cargo doc --all-features --no-deps
         env:
           RUSTDOCFLAGS: -D warnings
 
@@ -64,8 +63,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
 
       - name: Build release
-        # Note: sigilforge feature excluded - requires path dependency not available in CI
-        run: cargo build --release --features "process,fs,path,env,format,net,time,metrics,terminal,gpu,fs_stream,net_http,terminal-ui,observability,k8s,mcp,sandbox"
+        run: cargo build --release --all-features
 
       - name: Package crate
         run: cargo package --allow-dirty
