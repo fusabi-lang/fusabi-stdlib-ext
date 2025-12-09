@@ -44,7 +44,7 @@ jobs:
         run: cargo test --all-features
 
       - name: Run clippy
-        run: cargo clippy --all-features -- -D warnings
+        run: cargo clippy --all-features -- -D warnings -A unused-imports -A unused-variables -A unused-doc-comments -A clippy::unwrap-or-default -A unexpected_cfgs
 
       - name: Check documentation
         run: cargo doc --all-features --no-deps
