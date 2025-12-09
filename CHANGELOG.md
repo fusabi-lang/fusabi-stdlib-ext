@@ -7,7 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2025-12-08
+
 ### Added
+- **MCP Server Configuration Builder**:
+  - `McpServerConfig` struct for Phage context injection configurations
+  - `mcp_server_new()` - Create new MCP server configurations
+  - `mcp_server_with_inject()` - Add inject items to configurations
+  - `mcp_server_to_json()` - Serialize configurations to JSON
+  - `mcp_server_get_name()`, `mcp_server_get_endpoint()`, `mcp_server_get_inject()` - Accessors
+  - Full roundtrip conversion between Rust and `fusabi_host::Value`
+
+- **Error Types**:
+  - Added `InvalidValue` error variant for type conversion failures
+  - Added `Serialization` error variant for JSON serialization errors
+
 - **Documentation Infrastructure**:
   - Added `docs/STRUCTURE.md` describing documentation organization
   - Added `docs/RELEASE.md` with complete release process
@@ -53,6 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `mcp` (Model Context Protocol helpers)
 - Default-deny safety policies for filesystem and network access
 
-[Unreleased]: https://github.com/fusabi-lang/fusabi-stdlib-ext/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/fusabi-lang/fusabi-stdlib-ext/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/fusabi-lang/fusabi-stdlib-ext/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/fusabi-lang/fusabi-stdlib-ext/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/fusabi-lang/fusabi-stdlib-ext/releases/tag/v0.1.0

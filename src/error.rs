@@ -80,6 +80,14 @@ pub enum Error {
     /// Kubernetes error.
     #[error("kubernetes error: {0}")]
     K8s(String),
+
+    /// Invalid value error.
+    #[error("invalid value: {0}")]
+    InvalidValue(String),
+
+    /// Serialization error.
+    #[error("serialization error: {0}")]
+    Serialization(String),
 }
 
 impl Error {

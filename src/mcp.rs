@@ -262,11 +262,200 @@ pub fn json_to_fusabi(value: &JsonValue) -> Value {
         JsonValue::String(s) => Value::String(s.clone()),
         JsonValue::Array(items) => Value::List(items.iter().map(json_to_fusabi).collect()),
         JsonValue::Object(map) => {
-            let converted: HashMap<String, Value> =
-                map.iter().map(|(k, v)| (k.clone(), json_to_fusabi(v))).collect();
+            let converted: HashMap<String, Value> = map
+                .iter()
+                .map(|(k, v)| (k.clone(), json_to_fusabi(v)))
+                .collect();
             Value::Map(converted)
         }
     }
+}
+
+// =============================================================================
+// MCP Server Configuration Builder
+// =============================================================================
+// High-level utilities for building MCP server configurations from Fusabi scripts.
+
+/// MCP server configuration for Phage context injection.
+///
+/// This struct represents a simplified MCP server configuration used in
+/// Phage's context composition system.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct McpServerConfig {
+    /// Server name/identifier.
+    pub name: String,
+    /// Server endpoint URL.
+    pub endpoint: String,
+    /// Items to inject from this server.
+    #[serde(default)]
+    pub inject: Vec<String>,
+}
+
+impl McpServerConfig {
+    /// Create a new MCP server configuration.
+    pub fn new(name: impl Into<String>, endpoint: impl Into<String>) -> Self {
+        Self {
+            name: name.into(),
+            endpoint: endpoint.into(),
+            inject: Vec::new(),
+        }
+    }
+
+    /// Add inject items to the configuration.
+    pub fn with_inject(mut self, inject: Vec<String>) -> Self {
+        self.inject = inject;
+        self
+    }
+
+    /// Convert to a Fusabi Value (Map).
+    pub fn to_fusabi_value(&self) -> Value {
+        let mut map = HashMap::new();
+        map.insert("name".to_string(), Value::String(self.name.clone()));
+        map.insert("endpoint".to_string(), Value::String(self.endpoint.clone()));
+        map.insert(
+            "inject".to_string(),
+            Value::List(
+                self.inject
+                    .iter()
+                    .map(|s| Value::String(s.clone()))
+                    .collect(),
+            ),
+        );
+        Value::Map(map)
+    }
+
+    /// Create from a Fusabi Value (Map).
+    pub fn from_fusabi_value(value: &Value) -> Result<Self> {
+        match value {
+            Value::Map(map) => {
+                let name = map
+                    .get("name")
+                    .and_then(|v| match v {
+                        Value::String(s) => Some(s.clone()),
+                        _ => None,
+                    })
+                    .ok_or_else(|| Error::InvalidValue("MCP config missing 'name' field".into()))?;
+
+                let endpoint = map
+                    .get("endpoint")
+                    .and_then(|v| match v {
+                        Value::String(s) => Some(s.clone()),
+                        _ => None,
+                    })
+                    .ok_or_else(|| {
+                        Error::InvalidValue("MCP config missing 'endpoint' field".into())
+                    })?;
+
+                let inject = map
+                    .get("inject")
+                    .and_then(|v| match v {
+                        Value::List(items) => Some(
+                            items
+                                .iter()
+                                .filter_map(|item| match item {
+                                    Value::String(s) => Some(s.clone()),
+                                    _ => None,
+                                })
+                                .collect(),
+                        ),
+                        _ => None,
+                    })
+                    .unwrap_or_default();
+
+                Ok(McpServerConfig {
+                    name,
+                    endpoint,
+                    inject,
+                })
+            }
+            _ => Err(Error::InvalidValue(
+                "Expected Map for MCP server config".into(),
+            )),
+        }
+    }
+
+    /// Convert to JSON string.
+    pub fn to_json(&self) -> Result<String> {
+        serde_json::to_string_pretty(self).map_err(|e| Error::Serialization(e.to_string()))
+    }
+}
+
+/// Create a new MCP server config from Fusabi values.
+///
+/// # Arguments
+/// * `name` - Server name (String)
+/// * `endpoint` - Server endpoint URL (String)
+///
+/// # Returns
+/// A Fusabi Map value representing the config.
+pub fn mcp_server_new(name: &Value, endpoint: &Value) -> Result<Value> {
+    let name_str = match name {
+        Value::String(s) => s.clone(),
+        _ => return Err(Error::InvalidValue("name must be a string".into())),
+    };
+    let endpoint_str = match endpoint {
+        Value::String(s) => s.clone(),
+        _ => return Err(Error::InvalidValue("endpoint must be a string".into())),
+    };
+
+    Ok(McpServerConfig::new(name_str, endpoint_str).to_fusabi_value())
+}
+
+/// Add inject items to an MCP server config.
+///
+/// # Arguments
+/// * `server` - MCP server config (Map)
+/// * `inject` - List of items to inject (List of Strings)
+///
+/// # Returns
+/// Updated Fusabi Map value.
+pub fn mcp_server_with_inject(server: &Value, inject: &Value) -> Result<Value> {
+    let mut config = McpServerConfig::from_fusabi_value(server)?;
+
+    let inject_items = match inject {
+        Value::List(items) => items
+            .iter()
+            .filter_map(|v| match v {
+                Value::String(s) => Some(s.clone()),
+                _ => None,
+            })
+            .collect(),
+        _ => {
+            return Err(Error::InvalidValue(
+                "inject must be a list of strings".into(),
+            ))
+        }
+    };
+
+    config.inject = inject_items;
+    Ok(config.to_fusabi_value())
+}
+
+/// Convert MCP server config to JSON string.
+pub fn mcp_server_to_json(server: &Value) -> Result<Value> {
+    let config = McpServerConfig::from_fusabi_value(server)?;
+    let json = config.to_json()?;
+    Ok(Value::String(json))
+}
+
+/// Get the name from an MCP server config.
+pub fn mcp_server_get_name(server: &Value) -> Result<Value> {
+    let config = McpServerConfig::from_fusabi_value(server)?;
+    Ok(Value::String(config.name))
+}
+
+/// Get the endpoint from an MCP server config.
+pub fn mcp_server_get_endpoint(server: &Value) -> Result<Value> {
+    let config = McpServerConfig::from_fusabi_value(server)?;
+    Ok(Value::String(config.endpoint))
+}
+
+/// Get the inject list from an MCP server config.
+pub fn mcp_server_get_inject(server: &Value) -> Result<Value> {
+    let config = McpServerConfig::from_fusabi_value(server)?;
+    Ok(Value::List(
+        config.inject.into_iter().map(Value::String).collect(),
+    ))
 }
 
 #[cfg(test)]
@@ -292,7 +481,10 @@ mod tests {
             if let Value::Map(back_map) = &back {
                 assert_eq!(orig_map.len(), back_map.len());
                 for (k, v) in orig_map {
-                    assert_eq!(back_map.get(k).map(|v| format!("{:?}", v)), Some(format!("{:?}", v)));
+                    assert_eq!(
+                        back_map.get(k).map(|v| format!("{:?}", v)),
+                        Some(format!("{:?}", v))
+                    );
                 }
             } else {
                 panic!("Expected Map value");
@@ -315,5 +507,80 @@ mod tests {
 
         let json = serde_json::to_string(&tool).unwrap();
         assert!(json.contains("test-tool"));
+    }
+
+    #[test]
+    fn test_mcp_server_config_new() {
+        let config = McpServerConfig::new("test-server", "http://localhost:3000");
+        assert_eq!(config.name, "test-server");
+        assert_eq!(config.endpoint, "http://localhost:3000");
+        assert!(config.inject.is_empty());
+    }
+
+    #[test]
+    fn test_mcp_server_config_with_inject() {
+        let config = McpServerConfig::new("test", "http://localhost")
+            .with_inject(vec!["tasks".into(), "context".into()]);
+        assert_eq!(config.inject.len(), 2);
+        assert_eq!(config.inject[0], "tasks");
+    }
+
+    #[test]
+    fn test_mcp_server_config_roundtrip() {
+        let original = McpServerConfig {
+            name: "roundtrip".into(),
+            endpoint: "http://example.com".into(),
+            inject: vec!["a".into(), "b".into()],
+        };
+
+        let value = original.to_fusabi_value();
+        let recovered = McpServerConfig::from_fusabi_value(&value).unwrap();
+
+        assert_eq!(recovered.name, original.name);
+        assert_eq!(recovered.endpoint, original.endpoint);
+        assert_eq!(recovered.inject, original.inject);
+    }
+
+    #[test]
+    fn test_mcp_server_new_function() {
+        let name = Value::String("my-server".into());
+        let endpoint = Value::String("http://localhost:8080".into());
+
+        let result = mcp_server_new(&name, &endpoint).unwrap();
+        let config = McpServerConfig::from_fusabi_value(&result).unwrap();
+
+        assert_eq!(config.name, "my-server");
+        assert_eq!(config.endpoint, "http://localhost:8080");
+    }
+
+    #[test]
+    fn test_mcp_server_with_inject_function() {
+        let server = McpServerConfig::new("test", "http://localhost").to_fusabi_value();
+        let inject = Value::List(vec![
+            Value::String("item1".into()),
+            Value::String("item2".into()),
+        ]);
+
+        let result = mcp_server_with_inject(&server, &inject).unwrap();
+        let config = McpServerConfig::from_fusabi_value(&result).unwrap();
+
+        assert_eq!(config.inject, vec!["item1", "item2"]);
+    }
+
+    #[test]
+    fn test_mcp_server_to_json_function() {
+        let server = McpServerConfig::new("json-test", "http://test.com")
+            .with_inject(vec!["data".into()])
+            .to_fusabi_value();
+
+        let result = mcp_server_to_json(&server).unwrap();
+
+        if let Value::String(json) = result {
+            assert!(json.contains("json-test"));
+            assert!(json.contains("http://test.com"));
+            assert!(json.contains("data"));
+        } else {
+            panic!("Expected String value");
+        }
     }
 }
