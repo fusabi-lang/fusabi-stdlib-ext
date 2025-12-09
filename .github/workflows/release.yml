@@ -49,7 +49,7 @@ jobs:
       - name: Check documentation
         run: cargo doc --all-features --no-deps
         env:
-          RUSTDOCFLAGS: -D warnings
+          RUSTDOCFLAGS: -D warnings --cfg docsrs -A unexpected_cfgs
 
   build:
     name: Build Release
