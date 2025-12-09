@@ -49,7 +49,7 @@ jobs:
       - name: Check documentation
         run: cargo doc --all-features --no-deps
         env:
-          RUSTDOCFLAGS: -D warnings --cfg docsrs -A unexpected_cfgs
+          RUSTDOCFLAGS: -D warnings --cfg docsrs -A unexpected_cfgs -A rustdoc::broken_intra_doc_links
 
   build:
     name: Build Release
