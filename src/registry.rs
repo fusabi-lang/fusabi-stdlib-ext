@@ -136,19 +136,17 @@ impl StdlibRegistry {
     pub fn register_path(&self, registry: &mut HostRegistry) -> Result<()> {
         use crate::path;
 
-        registry.register_module("path", "join", |args, ctx| path::join(args, ctx));
+        registry.register_module("path", "join", path::join);
 
-        registry.register_module("path", "dirname", |args, ctx| path::dirname(args, ctx));
+        registry.register_module("path", "dirname", path::dirname);
 
-        registry.register_module("path", "basename", |args, ctx| path::basename(args, ctx));
+        registry.register_module("path", "basename", path::basename);
 
-        registry.register_module("path", "extension", |args, ctx| path::extension(args, ctx));
+        registry.register_module("path", "extension", path::extension);
 
-        registry.register_module("path", "normalize", |args, ctx| path::normalize(args, ctx));
+        registry.register_module("path", "normalize", path::normalize);
 
-        registry.register_module("path", "is_absolute", |args, ctx| {
-            path::is_absolute(args, ctx)
-        });
+        registry.register_module("path", "is_absolute", path::is_absolute);
 
         Ok(())
     }
@@ -166,7 +164,7 @@ impl StdlibRegistry {
         let s = safety.clone();
         registry.register_module("env", "set", move |args, ctx| env::set(&s, args, ctx));
 
-        registry.register_module("env", "cwd", |args, ctx| env::cwd(args, ctx));
+        registry.register_module("env", "cwd", env::cwd);
 
         Ok(())
     }
@@ -176,19 +174,13 @@ impl StdlibRegistry {
     pub fn register_format(&self, registry: &mut HostRegistry) -> Result<()> {
         use crate::format;
 
-        registry.register_module("format", "sprintf", |args, ctx| format::sprintf(args, ctx));
+        registry.register_module("format", "sprintf", format::sprintf);
 
-        registry.register_module("format", "template", |args, ctx| {
-            format::template(args, ctx)
-        });
+        registry.register_module("format", "template", format::template);
 
-        registry.register_module("format", "json_encode", |args, ctx| {
-            format::json_encode(args, ctx)
-        });
+        registry.register_module("format", "json_encode", format::json_encode);
 
-        registry.register_module("format", "json_decode", |args, ctx| {
-            format::json_decode(args, ctx)
-        });
+        registry.register_module("format", "json_decode", format::json_decode);
 
         Ok(())
     }
@@ -219,17 +211,15 @@ impl StdlibRegistry {
     pub fn register_time(&self, registry: &mut HostRegistry) -> Result<()> {
         use crate::time;
 
-        registry.register_module("time", "now", |args, ctx| time::now(args, ctx));
+        registry.register_module("time", "now", time::now);
 
-        registry.register_module("time", "now_millis", |args, ctx| {
-            time::now_millis(args, ctx)
-        });
+        registry.register_module("time", "now_millis", time::now_millis);
 
-        registry.register_module("time", "sleep", |args, ctx| time::sleep(args, ctx));
+        registry.register_module("time", "sleep", time::sleep);
 
-        registry.register_module("time", "format", |args, ctx| time::format_time(args, ctx));
+        registry.register_module("time", "format", time::format_time);
 
-        registry.register_module("time", "parse", |args, ctx| time::parse_time(args, ctx));
+        registry.register_module("time", "parse", time::parse_time);
 
         Ok(())
     }
@@ -239,17 +229,11 @@ impl StdlibRegistry {
     pub fn register_metrics(&self, registry: &mut HostRegistry) -> Result<()> {
         use crate::metrics;
 
-        registry.register_module("metrics", "counter_inc", |args, ctx| {
-            metrics::counter_inc(args, ctx)
-        });
+        registry.register_module("metrics", "counter_inc", metrics::counter_inc);
 
-        registry.register_module("metrics", "gauge_set", |args, ctx| {
-            metrics::gauge_set(args, ctx)
-        });
+        registry.register_module("metrics", "gauge_set", metrics::gauge_set);
 
-        registry.register_module("metrics", "histogram_observe", |args, ctx| {
-            metrics::histogram_observe(args, ctx)
-        });
+        registry.register_module("metrics", "histogram_observe", metrics::histogram_observe);
 
         Ok(())
     }

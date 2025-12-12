@@ -2,16 +2,9 @@
 //!
 //! Provides logging, tracing, and metrics integration using OpenTelemetry.
 
-use opentelemetry::{
-    global,
-    trace::{Tracer, TracerProvider},
-    KeyValue,
-};
+use fusabi_host::Value;
 use std::collections::HashMap;
 use std::time::Duration;
-
-use crate::error::{Error, Result};
-use fusabi_host::Value;
 
 /// Configuration for observability features.
 #[derive(Debug, Clone)]

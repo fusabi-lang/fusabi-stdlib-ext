@@ -134,9 +134,7 @@ impl MetricsRegistry {
         } else {
             drop(histograms);
             let mut histograms = self.histograms.write();
-            let histogram = histograms
-                .entry(name.to_string())
-                .or_insert_with(Histogram::new);
+            let histogram = histograms.entry(name.to_string()).or_default();
             histogram.observe(value);
         }
     }
