@@ -35,8 +35,6 @@ use parking_lot::Mutex;
 use std::collections::HashMap;
 use std::sync::Arc;
 
-/// Global registry of open file streams.
-/// In a real implementation, this would be managed by the SafetyConfig/Registry.
 lazy_static::lazy_static! {
     static ref STREAMS: Arc<Mutex<HashMap<i64, FileStream>>> = Arc::new(Mutex::new(HashMap::new()));
 }

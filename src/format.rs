@@ -60,24 +60,22 @@ pub fn json_encode(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Resu
 }
 
 /// Decode a JSON string to a value.
+#[cfg(feature = "serde-support")]
 pub fn json_decode(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
     let json_str = args.first().and_then(|v| v.as_str()).ok_or_else(|| {
         fusabi_host::Error::host_function("format.json_decode: missing JSON string")
     })?;
 
-    #[cfg(feature = "serde-support")]
-    {
-        Value::from_json_str(json_str)
-            .map_err(|e| fusabi_host::Error::host_function(format!("format.json_decode: {}", e)))
-    }
+    Value::from_json_str(json_str)
+        .map_err(|e| fusabi_host::Error::host_function(format!("format.json_decode: {}", e)))
+}
 
-    #[cfg(not(feature = "serde-support"))]
-    {
-        // Simple parsing without serde (very limited)
-        Err(fusabi_host::Error::host_function(
-            "json_decode requires serde-support feature",
-        ))
-    }
+/// Decode a JSON string to a value.
+#[cfg(not(feature = "serde-support"))]
+pub fn json_decode(_args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
+    Err(fusabi_host::Error::host_function(
+        "json_decode requires serde-support feature",
+    ))
 }
 
 // Helper functions
@@ -170,6 +168,7 @@ fn value_to_string(value: &Value) -> String {
     }
 }
 
+#[cfg(not(feature = "serde-support"))]
 fn value_to_json_simple(value: &Value) -> String {
     match value {
         Value::Null => "null".to_string(),

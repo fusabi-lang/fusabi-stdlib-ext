@@ -8,7 +8,6 @@ use std::time::Duration;
 use fusabi_host::ExecutionContext;
 use fusabi_host::Value;
 
-use crate::error::{Error, Result};
 use crate::safety::SafetyConfig;
 
 /// Execute a command and wait for completion.
