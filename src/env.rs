@@ -21,9 +21,9 @@ pub fn get(
         .ok_or_else(|| fusabi_host::Error::host_function("env.get: missing name argument"))?;
 
     // Check safety
-    safety.check_env(name).map_err(|e| {
-        fusabi_host::Error::host_function(e.to_string())
-    })?;
+    safety
+        .check_env(name)
+        .map_err(|e| fusabi_host::Error::host_function(e.to_string()))?;
 
     match std::env::var(name) {
         Ok(value) => Ok(Value::String(value)),
@@ -48,19 +48,16 @@ pub fn set(
         .ok_or_else(|| fusabi_host::Error::host_function("env.set: missing value argument"))?;
 
     // Check safety
-    safety.check_env(name).map_err(|e| {
-        fusabi_host::Error::host_function(e.to_string())
-    })?;
+    safety
+        .check_env(name)
+        .map_err(|e| fusabi_host::Error::host_function(e.to_string()))?;
 
     std::env::set_var(name, value);
     Ok(Value::Null)
 }
 
 /// Get the current working directory.
-pub fn cwd(
-    _args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
+pub fn cwd(_args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
     match std::env::current_dir() {
         Ok(path) => Ok(Value::String(path.to_string_lossy().into_owned())),
         Err(e) => Err(fusabi_host::Error::host_function(format!("env.cwd: {}", e))),
@@ -71,8 +68,8 @@ pub fn cwd(
 mod tests {
     use super::*;
     use fusabi_host::Capabilities;
-    use fusabi_host::{Sandbox, SandboxConfig};
     use fusabi_host::Limits;
+    use fusabi_host::{Sandbox, SandboxConfig};
 
     fn create_test_ctx() -> ExecutionContext {
         let sandbox = Sandbox::new(SandboxConfig::default()).unwrap();

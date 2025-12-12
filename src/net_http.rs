@@ -30,10 +30,10 @@
 //! ], &ctx)?;
 //! ```
 
-use fusabi_host::{ExecutionContext, Result, Value, Error};
+use crate::safety::SafetyConfig;
+use fusabi_host::{Error, ExecutionContext, Result, Value};
 use std::collections::HashMap;
 use std::sync::Arc;
-use crate::safety::SafetyConfig;
 
 /// Make an HTTP request with full control over options.
 ///
@@ -66,10 +66,7 @@ pub fn request(args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
         .ok_or_else(|| Error::host_function("net_http.request: missing url argument"))?;
 
     let empty_map = HashMap::new();
-    let headers = args
-        .get(2)
-        .and_then(|v| v.as_map())
-        .unwrap_or(&empty_map);
+    let headers = args.get(2).and_then(|v| v.as_map()).unwrap_or(&empty_map);
 
     let empty_options = HashMap::new();
     let options = args
@@ -83,35 +80,40 @@ pub fn request(args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
         .and_then(|v| v.as_int())
         .unwrap_or(30000);
 
-    let retries = options
-        .get("retries")
-        .and_then(|v| v.as_int())
-        .unwrap_or(0);
+    let retries = options.get("retries").and_then(|v| v.as_int()).unwrap_or(0);
 
     let _retry_delay = options
         .get("retry_delay")
         .and_then(|v| v.as_int())
         .unwrap_or(1000);
 
-    let _body = options
-        .get("body")
-        .and_then(|v| v.as_str());
+    let _body = options.get("body").and_then(|v| v.as_str());
 
     // TODO: Validate URL and check safety allowlist
     // TODO: Implement actual HTTP request with reqwest
 
     tracing::info!(
         "net_http.request: {} {} (timeout={}ms, retries={}, headers={})",
-        method, url, timeout, retries, headers.len()
+        method,
+        url,
+        timeout,
+        retries,
+        headers.len()
     );
 
     // Mock response
     let mut response = HashMap::new();
     response.insert("status".to_string(), Value::Int(200));
-    response.insert("body".to_string(), Value::String(format!("Response from {}", url)));
+    response.insert(
+        "body".to_string(),
+        Value::String(format!("Response from {}", url)),
+    );
 
     let mut response_headers = HashMap::new();
-    response_headers.insert("content-type".to_string(), Value::String("application/json".to_string()));
+    response_headers.insert(
+        "content-type".to_string(),
+        Value::String("application/json".to_string()),
+    );
     response.insert("headers".to_string(), Value::Map(response_headers));
 
     Ok(Value::Map(response))
@@ -135,10 +137,7 @@ pub fn download_stream(args: &[Value], _ctx: &ExecutionContext) -> Result<Value>
         .and_then(|v| v.as_str())
         .ok_or_else(|| Error::host_function("net_http.download_stream: missing url argument"))?;
 
-    let _chunk_size = args
-        .get(1)
-        .and_then(|v| v.as_int())
-        .unwrap_or(8192);
+    let _chunk_size = args.get(1).and_then(|v| v.as_int()).unwrap_or(8192);
 
     // TODO: Implement streaming download
     // For now, return a mock handle
@@ -175,7 +174,10 @@ pub fn upload_stream(args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
 
     let mut response = HashMap::new();
     response.insert("status".to_string(), Value::Int(201));
-    response.insert("body".to_string(), Value::String("Upload complete".to_string()));
+    response.insert(
+        "body".to_string(),
+        Value::String("Upload complete".to_string()),
+    );
 
     Ok(Value::Map(response))
 }
@@ -192,10 +194,9 @@ pub fn upload_stream(args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
 ///
 /// String containing the chunk data, or null when complete
 pub fn read_stream_chunk(args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
-    let _handle = args
-        .first()
-        .and_then(|v| v.as_int())
-        .ok_or_else(|| Error::host_function("net_http.read_stream_chunk: missing handle argument"))?;
+    let _handle = args.first().and_then(|v| v.as_int()).ok_or_else(|| {
+        Error::host_function("net_http.read_stream_chunk: missing handle argument")
+    })?;
 
     // TODO: Actually read from stream
     // For now, return mock data
@@ -218,10 +219,7 @@ pub fn close_stream(args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
 }
 
 /// Helper function to validate safety config for HTTP requests.
-pub fn check_request_safety(
-    _safety: &Arc<SafetyConfig>,
-    _url: &str,
-) -> Result<()> {
+pub fn check_request_safety(_safety: &Arc<SafetyConfig>, _url: &str) -> Result<()> {
     // TODO: Extract host and check allowlist
     // TODO: Validate timeout against max_timeout
     Ok(())
