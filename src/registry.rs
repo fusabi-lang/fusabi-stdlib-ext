@@ -5,7 +5,7 @@ use std::sync::Arc;
 use fusabi_host::HostRegistry;
 
 use crate::config::StdlibConfig;
-use crate::error::{Error, Result};
+use crate::error::Result;
 use crate::safety::SafetyConfig;
 
 /// Registry for stdlib modules.
