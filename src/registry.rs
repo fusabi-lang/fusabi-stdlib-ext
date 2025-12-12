@@ -109,9 +109,7 @@ impl StdlibRegistry {
         let safety = self.safety.clone();
 
         let s = safety.clone();
-        registry.register_module("fs", "read", move |args, ctx| {
-            fs::read_file(&s, args, ctx)
-        });
+        registry.register_module("fs", "read", move |args, ctx| fs::read_file(&s, args, ctx));
 
         let s = safety.clone();
         registry.register_module("fs", "write", move |args, ctx| {
@@ -119,24 +117,16 @@ impl StdlibRegistry {
         });
 
         let s = safety.clone();
-        registry.register_module("fs", "exists", move |args, ctx| {
-            fs::exists(&s, args, ctx)
-        });
+        registry.register_module("fs", "exists", move |args, ctx| fs::exists(&s, args, ctx));
 
         let s = safety.clone();
-        registry.register_module("fs", "list", move |args, ctx| {
-            fs::list_dir(&s, args, ctx)
-        });
+        registry.register_module("fs", "list", move |args, ctx| fs::list_dir(&s, args, ctx));
 
         let s = safety.clone();
-        registry.register_module("fs", "mkdir", move |args, ctx| {
-            fs::mkdir(&s, args, ctx)
-        });
+        registry.register_module("fs", "mkdir", move |args, ctx| fs::mkdir(&s, args, ctx));
 
         let s = safety.clone();
-        registry.register_module("fs", "remove", move |args, ctx| {
-            fs::remove(&s, args, ctx)
-        });
+        registry.register_module("fs", "remove", move |args, ctx| fs::remove(&s, args, ctx));
 
         Ok(())
     }
@@ -146,25 +136,15 @@ impl StdlibRegistry {
     pub fn register_path(&self, registry: &mut HostRegistry) -> Result<()> {
         use crate::path;
 
-        registry.register_module("path", "join", |args, ctx| {
-            path::join(args, ctx)
-        });
+        registry.register_module("path", "join", |args, ctx| path::join(args, ctx));
 
-        registry.register_module("path", "dirname", |args, ctx| {
-            path::dirname(args, ctx)
-        });
+        registry.register_module("path", "dirname", |args, ctx| path::dirname(args, ctx));
 
-        registry.register_module("path", "basename", |args, ctx| {
-            path::basename(args, ctx)
-        });
+        registry.register_module("path", "basename", |args, ctx| path::basename(args, ctx));
 
-        registry.register_module("path", "extension", |args, ctx| {
-            path::extension(args, ctx)
-        });
+        registry.register_module("path", "extension", |args, ctx| path::extension(args, ctx));
 
-        registry.register_module("path", "normalize", |args, ctx| {
-            path::normalize(args, ctx)
-        });
+        registry.register_module("path", "normalize", |args, ctx| path::normalize(args, ctx));
 
         registry.register_module("path", "is_absolute", |args, ctx| {
             path::is_absolute(args, ctx)
@@ -181,18 +161,12 @@ impl StdlibRegistry {
         let safety = self.safety.clone();
 
         let s = safety.clone();
-        registry.register_module("env", "get", move |args, ctx| {
-            env::get(&s, args, ctx)
-        });
+        registry.register_module("env", "get", move |args, ctx| env::get(&s, args, ctx));
 
         let s = safety.clone();
-        registry.register_module("env", "set", move |args, ctx| {
-            env::set(&s, args, ctx)
-        });
+        registry.register_module("env", "set", move |args, ctx| env::set(&s, args, ctx));
 
-        registry.register_module("env", "cwd", |args, ctx| {
-            env::cwd(args, ctx)
-        });
+        registry.register_module("env", "cwd", |args, ctx| env::cwd(args, ctx));
 
         Ok(())
     }
@@ -202,9 +176,7 @@ impl StdlibRegistry {
     pub fn register_format(&self, registry: &mut HostRegistry) -> Result<()> {
         use crate::format;
 
-        registry.register_module("format", "sprintf", |args, ctx| {
-            format::sprintf(args, ctx)
-        });
+        registry.register_module("format", "sprintf", |args, ctx| format::sprintf(args, ctx));
 
         registry.register_module("format", "template", |args, ctx| {
             format::template(args, ctx)
@@ -247,25 +219,17 @@ impl StdlibRegistry {
     pub fn register_time(&self, registry: &mut HostRegistry) -> Result<()> {
         use crate::time;
 
-        registry.register_module("time", "now", |args, ctx| {
-            time::now(args, ctx)
-        });
+        registry.register_module("time", "now", |args, ctx| time::now(args, ctx));
 
         registry.register_module("time", "now_millis", |args, ctx| {
             time::now_millis(args, ctx)
         });
 
-        registry.register_module("time", "sleep", |args, ctx| {
-            time::sleep(args, ctx)
-        });
+        registry.register_module("time", "sleep", |args, ctx| time::sleep(args, ctx));
 
-        registry.register_module("time", "format", |args, ctx| {
-            time::format_time(args, ctx)
-        });
+        registry.register_module("time", "format", |args, ctx| time::format_time(args, ctx));
 
-        registry.register_module("time", "parse", |args, ctx| {
-            time::parse_time(args, ctx)
-        });
+        registry.register_module("time", "parse", |args, ctx| time::parse_time(args, ctx));
 
         Ok(())
     }

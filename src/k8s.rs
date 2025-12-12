@@ -156,7 +156,12 @@ impl PodInfo {
                 .unwrap_or_else(|| "Unknown".to_string()),
             pod_ip: status.and_then(|s| s.pod_ip.clone()),
             node_name: pod.spec.as_ref().and_then(|s| s.node_name.clone()),
-            labels: metadata.labels.clone().unwrap_or_default().into_iter().collect(),
+            labels: metadata
+                .labels
+                .clone()
+                .unwrap_or_default()
+                .into_iter()
+                .collect(),
         }
     }
 
@@ -164,7 +169,10 @@ impl PodInfo {
     pub fn to_value(&self) -> Value {
         let mut map = HashMap::new();
         map.insert("name".to_string(), Value::String(self.name.clone()));
-        map.insert("namespace".to_string(), Value::String(self.namespace.clone()));
+        map.insert(
+            "namespace".to_string(),
+            Value::String(self.namespace.clone()),
+        );
         map.insert("phase".to_string(), Value::String(self.phase.clone()));
 
         if let Some(ref ip) = self.pod_ip {
@@ -203,8 +211,14 @@ mod tests {
 
         let value = info.to_value();
         if let Value::Map(map) = value {
-            assert_eq!(map.get("name"), Some(&Value::String("test-pod".to_string())));
-            assert_eq!(map.get("phase"), Some(&Value::String("Running".to_string())));
+            assert_eq!(
+                map.get("name"),
+                Some(&Value::String("test-pod".to_string()))
+            );
+            assert_eq!(
+                map.get("phase"),
+                Some(&Value::String("Running".to_string()))
+            );
         } else {
             panic!("Expected Map value");
         }

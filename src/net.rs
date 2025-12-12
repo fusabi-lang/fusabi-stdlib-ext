@@ -26,9 +26,10 @@ pub fn http_get(
     let host = extract_host(url)?;
 
     // Check safety
-    safety.hosts.check(&host).map_err(|e| {
-        fusabi_host::Error::host_function(e.to_string())
-    })?;
+    safety
+        .hosts
+        .check(&host)
+        .map_err(|e| fusabi_host::Error::host_function(e.to_string()))?;
 
     // Apply timeout
     let timeout = timeout
@@ -42,8 +43,14 @@ pub fn http_get(
     Ok(Value::Map({
         let mut m = std::collections::HashMap::new();
         m.insert("status".into(), Value::Int(200));
-        m.insert("body".into(), Value::String(format!("Response from {}", url)));
-        m.insert("headers".into(), Value::Map(std::collections::HashMap::new()));
+        m.insert(
+            "body".into(),
+            Value::String(format!("Response from {}", url)),
+        );
+        m.insert(
+            "headers".into(),
+            Value::Map(std::collections::HashMap::new()),
+        );
         m
     }))
 }
@@ -60,18 +67,16 @@ pub fn http_post(
         .and_then(|v| v.as_str())
         .ok_or_else(|| fusabi_host::Error::host_function("net.post: missing URL argument"))?;
 
-    let body = args
-        .get(1)
-        .map(|v| v.to_string())
-        .unwrap_or_default();
+    let body = args.get(1).map(|v| v.to_string()).unwrap_or_default();
 
     // Extract host from URL
     let host = extract_host(url)?;
 
     // Check safety
-    safety.hosts.check(&host).map_err(|e| {
-        fusabi_host::Error::host_function(e.to_string())
-    })?;
+    safety
+        .hosts
+        .check(&host)
+        .map_err(|e| fusabi_host::Error::host_function(e.to_string()))?;
 
     // Apply timeout
     let timeout = timeout
@@ -79,14 +84,22 @@ pub fn http_post(
         .unwrap_or(safety.default_timeout);
 
     // Perform request (simulated)
-    tracing::info!("HTTP POST {} (body: {} bytes, timeout: {:?})", url, body.len(), timeout);
+    tracing::info!(
+        "HTTP POST {} (body: {} bytes, timeout: {:?})",
+        url,
+        body.len(),
+        timeout
+    );
 
     // In real implementation, would use reqwest
     Ok(Value::Map({
         let mut m = std::collections::HashMap::new();
         m.insert("status".into(), Value::Int(200));
         m.insert("body".into(), Value::String("OK".into()));
-        m.insert("headers".into(), Value::Map(std::collections::HashMap::new()));
+        m.insert(
+            "headers".into(),
+            Value::Map(std::collections::HashMap::new()),
+        );
         m
     }))
 }
@@ -194,10 +207,10 @@ fn extract_host(url: &str) -> fusabi_host::Result<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use fusabi_host::Capabilities;
-    use fusabi_host::{Sandbox, SandboxConfig};
-    use fusabi_host::Limits;
     use crate::safety::HostAllowlist;
+    use fusabi_host::Capabilities;
+    use fusabi_host::Limits;
+    use fusabi_host::{Sandbox, SandboxConfig};
 
     fn create_test_ctx() -> ExecutionContext {
         let sandbox = Sandbox::new(SandboxConfig::default()).unwrap();
@@ -206,8 +219,14 @@ mod tests {
 
     #[test]
     fn test_extract_host() {
-        assert_eq!(extract_host("https://example.com/path").unwrap(), "example.com");
-        assert_eq!(extract_host("http://api.test.com:8080/").unwrap(), "api.test.com");
+        assert_eq!(
+            extract_host("https://example.com/path").unwrap(),
+            "example.com"
+        );
+        assert_eq!(
+            extract_host("http://api.test.com:8080/").unwrap(),
+            "api.test.com"
+        );
         assert_eq!(extract_host("example.com").unwrap(), "example.com");
     }
 
@@ -227,10 +246,8 @@ mod tests {
 
     #[test]
     fn test_get_with_permission() {
-        let safety = Arc::new(
-            SafetyConfig::new()
-                .with_hosts(HostAllowlist::none().allow("example.com"))
-        );
+        let safety =
+            Arc::new(SafetyConfig::new().with_hosts(HostAllowlist::none().allow("example.com")));
         let ctx = create_test_ctx();
 
         let result = http_get(
@@ -249,7 +266,10 @@ mod tests {
             .with_timeout(Duration::from_secs(10))
             .with_follow_redirects(false);
 
-        assert_eq!(opts.headers.get("Content-Type"), Some(&"application/json".to_string()));
+        assert_eq!(
+            opts.headers.get("Content-Type"),
+            Some(&"application/json".to_string())
+        );
         assert_eq!(opts.timeout, Some(Duration::from_secs(10)));
         assert!(!opts.follow_redirects);
     }

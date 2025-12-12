@@ -30,10 +30,10 @@
 //! }
 //! ```
 
-use fusabi_host::{ExecutionContext, Result, Value, Error};
-use std::sync::Arc;
+use fusabi_host::{Error, ExecutionContext, Result, Value};
 use parking_lot::Mutex;
 use std::collections::HashMap;
+use std::sync::Arc;
 
 /// Global registry of open file streams.
 /// In a real implementation, this would be managed by the SafetyConfig/Registry.
@@ -69,10 +69,7 @@ pub fn tail(args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
         .and_then(|v| v.as_str())
         .ok_or_else(|| Error::host_function("fs_stream.tail: missing path argument"))?;
 
-    let buffer_size = args
-        .get(1)
-        .and_then(|v| v.as_int())
-        .unwrap_or(100) as usize;
+    let buffer_size = args.get(1).and_then(|v| v.as_int()).unwrap_or(100) as usize;
 
     // TODO: Actually open file and set up tailing
     // For now, create a mock stream
@@ -86,7 +83,12 @@ pub fn tail(args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
 
     STREAMS.lock().insert(handle, stream);
 
-    tracing::debug!("fs_stream.tail: opened {} with buffer_size={}, handle={}", path, buffer_size, handle);
+    tracing::debug!(
+        "fs_stream.tail: opened {} with buffer_size={}, handle={}",
+        path,
+        buffer_size,
+        handle
+    );
 
     Ok(Value::Int(handle))
 }
@@ -118,7 +120,10 @@ pub fn read_line(args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
     stream.position += 1;
 
     if stream.position % 3 == 0 {
-        Ok(Value::String(format!("Mock line {} from {}", stream.position, stream.path)))
+        Ok(Value::String(format!(
+            "Mock line {} from {}",
+            stream.position, stream.path
+        )))
     } else {
         Ok(Value::Null)
     }
@@ -189,10 +194,7 @@ pub fn open(args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
         .and_then(|v| v.as_str())
         .ok_or_else(|| Error::host_function("fs_stream.open: missing path argument"))?;
 
-    let chunk_size = args
-        .get(1)
-        .and_then(|v| v.as_int())
-        .unwrap_or(4096) as usize;
+    let chunk_size = args.get(1).and_then(|v| v.as_int()).unwrap_or(4096) as usize;
 
     // TODO: Actually open file
     let handle = NEXT_HANDLE.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
@@ -205,7 +207,12 @@ pub fn open(args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
 
     STREAMS.lock().insert(handle, stream);
 
-    tracing::debug!("fs_stream.open: opened {} with chunk_size={}, handle={}", path, chunk_size, handle);
+    tracing::debug!(
+        "fs_stream.open: opened {} with chunk_size={}, handle={}",
+        path,
+        chunk_size,
+        handle
+    );
 
     Ok(Value::Int(handle))
 }
@@ -239,6 +246,9 @@ pub fn read_chunk(args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
     if stream.position > stream.buffer_size * 5 {
         Ok(Value::Null)
     } else {
-        Ok(Value::String(format!("Mock chunk at position {}", stream.position)))
+        Ok(Value::String(format!(
+            "Mock chunk at position {}",
+            stream.position
+        )))
     }
 }

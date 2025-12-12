@@ -33,13 +33,18 @@ impl TerminalUI {
 
     /// Get the terminal size.
     pub fn size(&self) -> Result<(u16, u16)> {
-        let size = self.terminal.size().map_err(|e| Error::TerminalUI(e.to_string()))?;
+        let size = self
+            .terminal
+            .size()
+            .map_err(|e| Error::TerminalUI(e.to_string()))?;
         Ok((size.width, size.height))
     }
 
     /// Clear the terminal.
     pub fn clear(&mut self) -> Result<()> {
-        self.terminal.clear().map_err(|e| Error::TerminalUI(e.to_string()))
+        self.terminal
+            .clear()
+            .map_err(|e| Error::TerminalUI(e.to_string()))
     }
 }
 
@@ -93,8 +98,7 @@ pub fn value_list<'a>(values: &'a [Value]) -> List<'a> {
 
 /// Create a simple status bar.
 pub fn status_bar<'a>(status: &'a str) -> Paragraph<'a> {
-    Paragraph::new(status)
-        .style(Style::default().fg(Color::White).bg(Color::DarkGray))
+    Paragraph::new(status).style(Style::default().fg(Color::White).bg(Color::DarkGray))
 }
 
 /// Common key event handling.

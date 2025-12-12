@@ -8,10 +8,7 @@ use fusabi_host::ExecutionContext;
 use fusabi_host::Value;
 
 /// Join path components.
-pub fn join(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
+pub fn join(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
     if args.is_empty() {
         return Err(fusabi_host::Error::host_function("path.join: no arguments"));
     }
@@ -19,9 +16,9 @@ pub fn join(
     let mut result = PathBuf::new();
 
     for arg in args {
-        let part = arg
-            .as_str()
-            .ok_or_else(|| fusabi_host::Error::host_function("path.join: argument must be string"))?;
+        let part = arg.as_str().ok_or_else(|| {
+            fusabi_host::Error::host_function("path.join: argument must be string")
+        })?;
         result.push(part);
     }
 
@@ -29,10 +26,7 @@ pub fn join(
 }
 
 /// Get the directory name of a path.
-pub fn dirname(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
+pub fn dirname(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
     let path_str = args
         .first()
         .and_then(|v| v.as_str())
@@ -47,10 +41,7 @@ pub fn dirname(
 }
 
 /// Get the base name of a path.
-pub fn basename(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
+pub fn basename(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
     let path_str = args
         .first()
         .and_then(|v| v.as_str())
@@ -65,14 +56,10 @@ pub fn basename(
 }
 
 /// Get the file extension.
-pub fn extension(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
-    let path_str = args
-        .first()
-        .and_then(|v| v.as_str())
-        .ok_or_else(|| fusabi_host::Error::host_function("path.extension: missing path argument"))?;
+pub fn extension(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
+    let path_str = args.first().and_then(|v| v.as_str()).ok_or_else(|| {
+        fusabi_host::Error::host_function("path.extension: missing path argument")
+    })?;
 
     let path = Path::new(path_str);
 
@@ -83,14 +70,10 @@ pub fn extension(
 }
 
 /// Normalize a path.
-pub fn normalize(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
-    let path_str = args
-        .first()
-        .and_then(|v| v.as_str())
-        .ok_or_else(|| fusabi_host::Error::host_function("path.normalize: missing path argument"))?;
+pub fn normalize(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
+    let path_str = args.first().and_then(|v| v.as_str()).ok_or_else(|| {
+        fusabi_host::Error::host_function("path.normalize: missing path argument")
+    })?;
 
     // Simple normalization - in real implementation would handle . and ..
     let path = Path::new(path_str);
@@ -100,14 +83,10 @@ pub fn normalize(
 }
 
 /// Check if a path is absolute.
-pub fn is_absolute(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
-    let path_str = args
-        .first()
-        .and_then(|v| v.as_str())
-        .ok_or_else(|| fusabi_host::Error::host_function("path.is_absolute: missing path argument"))?;
+pub fn is_absolute(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
+    let path_str = args.first().and_then(|v| v.as_str()).ok_or_else(|| {
+        fusabi_host::Error::host_function("path.is_absolute: missing path argument")
+    })?;
 
     let path = Path::new(path_str);
     Ok(Value::Bool(path.is_absolute()))
@@ -117,8 +96,8 @@ pub fn is_absolute(
 mod tests {
     use super::*;
     use fusabi_host::Capabilities;
-    use fusabi_host::{Sandbox, SandboxConfig};
     use fusabi_host::Limits;
+    use fusabi_host::{Sandbox, SandboxConfig};
 
     fn create_test_ctx() -> ExecutionContext {
         let sandbox = Sandbox::new(SandboxConfig::default()).unwrap();
@@ -128,11 +107,15 @@ mod tests {
     #[test]
     fn test_join() {
         let ctx = create_test_ctx();
-        let result = join(&[
-            Value::String("/home".into()),
-            Value::String("user".into()),
-            Value::String("file.txt".into()),
-        ], &ctx).unwrap();
+        let result = join(
+            &[
+                Value::String("/home".into()),
+                Value::String("user".into()),
+                Value::String("file.txt".into()),
+            ],
+            &ctx,
+        )
+        .unwrap();
 
         let path = result.as_str().unwrap();
         assert!(path.contains("home"));

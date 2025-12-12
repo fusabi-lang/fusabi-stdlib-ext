@@ -109,10 +109,10 @@ pub mod k8s;
 #[cfg(feature = "mcp")]
 pub mod mcp;
 
-pub use config::{StdlibConfig, ModuleConfig};
+pub use config::{ModuleConfig, StdlibConfig};
 pub use error::{Error, Result};
 pub use registry::StdlibRegistry;
-pub use safety::{SafetyConfig, PathAllowlist, HostAllowlist};
+pub use safety::{HostAllowlist, PathAllowlist, SafetyConfig};
 
 /// Crate version for compatibility checks.
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");

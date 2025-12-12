@@ -26,7 +26,7 @@
 //! let text = terminal::clipboard_read(&[], &ctx)?;
 //! ```
 
-use fusabi_host::{ExecutionContext, Result, Value, Error};
+use fusabi_host::{Error, ExecutionContext, Result, Value};
 
 /// Read a single key event (blocking).
 ///
@@ -44,7 +44,9 @@ pub fn read_key(_args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
     // TODO: Implement using crossterm
     // For now, return a placeholder
     tracing::warn!("terminal.read_key: not yet implemented");
-    Err(Error::host_function("terminal.read_key: not yet implemented"))
+    Err(Error::host_function(
+        "terminal.read_key: not yet implemented",
+    ))
 }
 
 /// Get terminal dimensions.
@@ -69,7 +71,9 @@ pub fn size(_args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
 pub fn clipboard_read(_args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
     // TODO: Implement using clipboard crate
     tracing::warn!("terminal.clipboard_read: not yet implemented");
-    Err(Error::host_function("terminal.clipboard_read: not yet implemented"))
+    Err(Error::host_function(
+        "terminal.clipboard_read: not yet implemented",
+    ))
 }
 
 /// Write text to system clipboard.
@@ -84,8 +88,13 @@ pub fn clipboard_write(args: &[Value], _ctx: &ExecutionContext) -> Result<Value>
         .ok_or_else(|| Error::host_function("terminal.clipboard_write: missing text argument"))?;
 
     // TODO: Implement using clipboard crate
-    tracing::warn!("terminal.clipboard_write: not yet implemented (text: {})", text);
-    Err(Error::host_function("terminal.clipboard_write: not yet implemented"))
+    tracing::warn!(
+        "terminal.clipboard_write: not yet implemented (text: {})",
+        text
+    );
+    Err(Error::host_function(
+        "terminal.clipboard_write: not yet implemented",
+    ))
 }
 
 /// Apply ANSI color to text.
@@ -118,7 +127,12 @@ pub fn colorize(args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
         "magenta" => "35",
         "cyan" => "36",
         "white" => "37",
-        _ => return Err(Error::host_function(format!("terminal.colorize: unknown color '{}'", color))),
+        _ => {
+            return Err(Error::host_function(format!(
+                "terminal.colorize: unknown color '{}'",
+                color
+            )))
+        }
     };
 
     let colored = format!("\x1b[{}m{}\x1b[0m", color_code, text);
@@ -151,5 +165,7 @@ pub fn set_cursor(args: &[Value], _ctx: &ExecutionContext) -> Result<Value> {
 
     // TODO: Implement using crossterm
     tracing::debug!("terminal.set_cursor: not yet implemented");
-    Err(Error::host_function("terminal.set_cursor: not yet implemented"))
+    Err(Error::host_function(
+        "terminal.set_cursor: not yet implemented",
+    ))
 }

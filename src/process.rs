@@ -24,9 +24,9 @@ pub fn exec(
         .ok_or_else(|| fusabi_host::Error::host_function("exec: missing command argument"))?;
 
     // Check safety
-    safety.check_execute(command).map_err(|e| {
-        fusabi_host::Error::host_function(e.to_string())
-    })?;
+    safety
+        .check_execute(command)
+        .map_err(|e| fusabi_host::Error::host_function(e.to_string()))?;
 
     // Get arguments
     let cmd_args: Vec<String> = args
@@ -41,7 +41,12 @@ pub fn exec(
         .unwrap_or(safety.default_timeout);
 
     // Execute command (simulated)
-    tracing::info!("Executing: {} {:?} (timeout: {:?})", command, cmd_args, timeout);
+    tracing::info!(
+        "Executing: {} {:?} (timeout: {:?})",
+        command,
+        cmd_args,
+        timeout
+    );
 
     // In real implementation, would use tokio::process::Command
     let output = format!("Executed: {} {}", command, cmd_args.join(" "));
@@ -56,10 +61,7 @@ pub fn exec(
 }
 
 /// Spawn a command without waiting.
-pub fn spawn(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
+pub fn spawn(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
     let command = args
         .first()
         .and_then(|v| v.as_str())
@@ -107,8 +109,8 @@ impl Default for ExecOptions {
 mod tests {
     use super::*;
     use fusabi_host::Capabilities;
-    use fusabi_host::{Sandbox, SandboxConfig};
     use fusabi_host::Limits;
+    use fusabi_host::{Sandbox, SandboxConfig};
 
     fn create_test_ctx() -> ExecutionContext {
         let sandbox = Sandbox::new(SandboxConfig::default()).unwrap();
@@ -129,7 +131,7 @@ mod tests {
         let safety = Arc::new(
             SafetyConfig::new()
                 .with_allow_process(true)
-                .with_allowed_commands(["ls"])
+                .with_allowed_commands(["ls"]),
         );
         let ctx = create_test_ctx();
 
@@ -142,7 +144,7 @@ mod tests {
         let safety = Arc::new(
             SafetyConfig::new()
                 .with_allow_process(true)
-                .with_allowed_commands(["ls"])
+                .with_allowed_commands(["ls"]),
         );
         let ctx = create_test_ctx();
 

@@ -24,9 +24,10 @@ pub fn read_file(
     let path = Path::new(path_str);
 
     // Check safety
-    safety.paths.check_read(path).map_err(|e| {
-        fusabi_host::Error::host_function(e.to_string())
-    })?;
+    safety
+        .paths
+        .check_read(path)
+        .map_err(|e| fusabi_host::Error::host_function(e.to_string()))?;
 
     // Read file
     let content = std::fs::read_to_string(path)
@@ -54,9 +55,10 @@ pub fn write_file(
     let path = Path::new(path_str);
 
     // Check safety
-    safety.paths.check_write(path).map_err(|e| {
-        fusabi_host::Error::host_function(e.to_string())
-    })?;
+    safety
+        .paths
+        .check_write(path)
+        .map_err(|e| fusabi_host::Error::host_function(e.to_string()))?;
 
     // Write file
     std::fs::write(path, content)
@@ -79,9 +81,10 @@ pub fn exists(
     let path = Path::new(path_str);
 
     // Check safety (need read permission to check existence)
-    safety.paths.check_read(path).map_err(|e| {
-        fusabi_host::Error::host_function(e.to_string())
-    })?;
+    safety
+        .paths
+        .check_read(path)
+        .map_err(|e| fusabi_host::Error::host_function(e.to_string()))?;
 
     Ok(Value::Bool(path.exists()))
 }
@@ -100,9 +103,10 @@ pub fn list_dir(
     let path = Path::new(path_str);
 
     // Check safety
-    safety.paths.check_read(path).map_err(|e| {
-        fusabi_host::Error::host_function(e.to_string())
-    })?;
+    safety
+        .paths
+        .check_read(path)
+        .map_err(|e| fusabi_host::Error::host_function(e.to_string()))?;
 
     // List directory
     let entries: Vec<Value> = std::fs::read_dir(path)
@@ -128,9 +132,10 @@ pub fn mkdir(
     let path = Path::new(path_str);
 
     // Check safety
-    safety.paths.check_write(path).map_err(|e| {
-        fusabi_host::Error::host_function(e.to_string())
-    })?;
+    safety
+        .paths
+        .check_write(path)
+        .map_err(|e| fusabi_host::Error::host_function(e.to_string()))?;
 
     // Create directory
     std::fs::create_dir_all(path)
@@ -153,9 +158,10 @@ pub fn remove(
     let path = Path::new(path_str);
 
     // Check safety
-    safety.paths.check_write(path).map_err(|e| {
-        fusabi_host::Error::host_function(e.to_string())
-    })?;
+    safety
+        .paths
+        .check_write(path)
+        .map_err(|e| fusabi_host::Error::host_function(e.to_string()))?;
 
     // Remove
     if path.is_dir() {
@@ -172,10 +178,10 @@ pub fn remove(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use fusabi_host::Capabilities;
-    use fusabi_host::{Sandbox, SandboxConfig};
-    use fusabi_host::Limits;
     use crate::safety::PathAllowlist;
+    use fusabi_host::Capabilities;
+    use fusabi_host::Limits;
+    use fusabi_host::{Sandbox, SandboxConfig};
 
     fn create_test_ctx() -> ExecutionContext {
         let sandbox = Sandbox::new(SandboxConfig::default()).unwrap();
@@ -193,10 +199,8 @@ mod tests {
 
     #[test]
     fn test_exists_with_permission() {
-        let safety = Arc::new(
-            SafetyConfig::new()
-                .with_paths(PathAllowlist::none().allow_read("/tmp"))
-        );
+        let safety =
+            Arc::new(SafetyConfig::new().with_paths(PathAllowlist::none().allow_read("/tmp")));
         let ctx = create_test_ctx();
 
         let result = exists(&safety, &[Value::String("/tmp".into())], &ctx);

@@ -6,14 +6,10 @@ use fusabi_host::ExecutionContext;
 use fusabi_host::Value;
 
 /// Sprintf-style string formatting.
-pub fn sprintf(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
-    let format_str = args
-        .first()
-        .and_then(|v| v.as_str())
-        .ok_or_else(|| fusabi_host::Error::host_function("format.sprintf: missing format string"))?;
+pub fn sprintf(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
+    let format_str = args.first().and_then(|v| v.as_str()).ok_or_else(|| {
+        fusabi_host::Error::host_function("format.sprintf: missing format string")
+    })?;
 
     let format_args = &args[1..];
     let result = format_string(format_str, format_args)?;
@@ -22,14 +18,10 @@ pub fn sprintf(
 }
 
 /// Simple template string substitution.
-pub fn template(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
-    let template_str = args
-        .first()
-        .and_then(|v| v.as_str())
-        .ok_or_else(|| fusabi_host::Error::host_function("format.template: missing template string"))?;
+pub fn template(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
+    let template_str = args.first().and_then(|v| v.as_str()).ok_or_else(|| {
+        fusabi_host::Error::host_function("format.template: missing template string")
+    })?;
 
     let values = args
         .get(1)
@@ -48,10 +40,7 @@ pub fn template(
 }
 
 /// Encode a value to JSON string.
-pub fn json_encode(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
+pub fn json_encode(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
     let value = args
         .first()
         .ok_or_else(|| fusabi_host::Error::host_function("format.json_encode: missing value"))?;
@@ -71,14 +60,10 @@ pub fn json_encode(
 }
 
 /// Decode a JSON string to a value.
-pub fn json_decode(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
-    let json_str = args
-        .first()
-        .and_then(|v| v.as_str())
-        .ok_or_else(|| fusabi_host::Error::host_function("format.json_decode: missing JSON string"))?;
+pub fn json_decode(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
+    let json_str = args.first().and_then(|v| v.as_str()).ok_or_else(|| {
+        fusabi_host::Error::host_function("format.json_decode: missing JSON string")
+    })?;
 
     #[cfg(feature = "serde-support")]
     {
@@ -89,7 +74,9 @@ pub fn json_decode(
     #[cfg(not(feature = "serde-support"))]
     {
         // Simple parsing without serde (very limited)
-        Err(fusabi_host::Error::host_function("json_decode requires serde-support feature"))
+        Err(fusabi_host::Error::host_function(
+            "json_decode requires serde-support feature",
+        ))
     }
 }
 
@@ -111,7 +98,9 @@ fn format_string(format_str: &str, args: &[Value]) -> fusabi_host::Result<String
                     's' => {
                         chars.next();
                         let arg = args.get(arg_index).ok_or_else(|| {
-                            fusabi_host::Error::host_function("format.sprintf: not enough arguments")
+                            fusabi_host::Error::host_function(
+                                "format.sprintf: not enough arguments",
+                            )
                         })?;
                         result.push_str(&value_to_string(arg));
                         arg_index += 1;
@@ -119,7 +108,9 @@ fn format_string(format_str: &str, args: &[Value]) -> fusabi_host::Result<String
                     'd' | 'i' => {
                         chars.next();
                         let arg = args.get(arg_index).ok_or_else(|| {
-                            fusabi_host::Error::host_function("format.sprintf: not enough arguments")
+                            fusabi_host::Error::host_function(
+                                "format.sprintf: not enough arguments",
+                            )
                         })?;
                         if let Some(n) = arg.as_int() {
                             result.push_str(&n.to_string());
@@ -131,7 +122,9 @@ fn format_string(format_str: &str, args: &[Value]) -> fusabi_host::Result<String
                     'f' => {
                         chars.next();
                         let arg = args.get(arg_index).ok_or_else(|| {
-                            fusabi_host::Error::host_function("format.sprintf: not enough arguments")
+                            fusabi_host::Error::host_function(
+                                "format.sprintf: not enough arguments",
+                            )
                         })?;
                         if let Some(f) = arg.as_float() {
                             result.push_str(&f.to_string());
@@ -203,8 +196,8 @@ fn value_to_json_simple(value: &Value) -> String {
 mod tests {
     use super::*;
     use fusabi_host::Capabilities;
-    use fusabi_host::{Sandbox, SandboxConfig};
     use fusabi_host::Limits;
+    use fusabi_host::{Sandbox, SandboxConfig};
 
     fn create_test_ctx() -> ExecutionContext {
         let sandbox = Sandbox::new(SandboxConfig::default()).unwrap();
@@ -215,23 +208,34 @@ mod tests {
     fn test_sprintf() {
         let ctx = create_test_ctx();
 
-        let result = sprintf(&[
-            Value::String("Hello, %s! You have %d messages.".into()),
-            Value::String("Alice".into()),
-            Value::Int(5),
-        ], &ctx).unwrap();
+        let result = sprintf(
+            &[
+                Value::String("Hello, %s! You have %d messages.".into()),
+                Value::String("Alice".into()),
+                Value::Int(5),
+            ],
+            &ctx,
+        )
+        .unwrap();
 
-        assert_eq!(result.as_str().unwrap(), "Hello, Alice! You have 5 messages.");
+        assert_eq!(
+            result.as_str().unwrap(),
+            "Hello, Alice! You have 5 messages."
+        );
     }
 
     #[test]
     fn test_sprintf_float() {
         let ctx = create_test_ctx();
 
-        let result = sprintf(&[
-            Value::String("Pi is approximately %f".into()),
-            Value::Float(3.14159),
-        ], &ctx).unwrap();
+        let result = sprintf(
+            &[
+                Value::String("Pi is approximately %f".into()),
+                Value::Float(3.14159),
+            ],
+            &ctx,
+        )
+        .unwrap();
 
         assert!(result.as_str().unwrap().contains("3.14"));
     }
@@ -244,10 +248,14 @@ mod tests {
         values.insert("name".to_string(), Value::String("Bob".into()));
         values.insert("count".to_string(), Value::Int(3));
 
-        let result = template(&[
-            Value::String("Hello, {{name}}! You have {{count}} items.".into()),
-            Value::Map(values),
-        ], &ctx).unwrap();
+        let result = template(
+            &[
+                Value::String("Hello, {{name}}! You have {{count}} items.".into()),
+                Value::Map(values),
+            ],
+            &ctx,
+        )
+        .unwrap();
 
         assert_eq!(result.as_str().unwrap(), "Hello, Bob! You have 3 items.");
     }

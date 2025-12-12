@@ -8,10 +8,7 @@ use fusabi_host::ExecutionContext;
 use fusabi_host::Value;
 
 /// Get current Unix timestamp in seconds.
-pub fn now(
-    _args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
+pub fn now(_args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
     let timestamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_secs())
@@ -21,10 +18,7 @@ pub fn now(
 }
 
 /// Get current Unix timestamp in milliseconds.
-pub fn now_millis(
-    _args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
+pub fn now_millis(_args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
     let timestamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_millis())
@@ -34,17 +28,15 @@ pub fn now_millis(
 }
 
 /// Sleep for a duration in milliseconds.
-pub fn sleep(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
-    let millis = args
-        .first()
-        .and_then(|v| v.as_int())
-        .ok_or_else(|| fusabi_host::Error::host_function("time.sleep: missing milliseconds argument"))?;
+pub fn sleep(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
+    let millis = args.first().and_then(|v| v.as_int()).ok_or_else(|| {
+        fusabi_host::Error::host_function("time.sleep: missing milliseconds argument")
+    })?;
 
     if millis < 0 {
-        return Err(fusabi_host::Error::host_function("time.sleep: milliseconds must be non-negative"));
+        return Err(fusabi_host::Error::host_function(
+            "time.sleep: milliseconds must be non-negative",
+        ));
     }
 
     std::thread::sleep(Duration::from_millis(millis as u64));
@@ -52,14 +44,10 @@ pub fn sleep(
 }
 
 /// Format a Unix timestamp.
-pub fn format_time(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
-    let timestamp = args
-        .first()
-        .and_then(|v| v.as_int())
-        .ok_or_else(|| fusabi_host::Error::host_function("time.format: missing timestamp argument"))?;
+pub fn format_time(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
+    let timestamp = args.first().and_then(|v| v.as_int()).ok_or_else(|| {
+        fusabi_host::Error::host_function("time.format: missing timestamp argument")
+    })?;
 
     let format_str = args
         .get(1)
@@ -72,14 +60,10 @@ pub fn format_time(
 }
 
 /// Parse a time string to Unix timestamp.
-pub fn parse_time(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
-    let time_str = args
-        .first()
-        .and_then(|v| v.as_str())
-        .ok_or_else(|| fusabi_host::Error::host_function("time.parse: missing time string argument"))?;
+pub fn parse_time(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
+    let time_str = args.first().and_then(|v| v.as_str()).ok_or_else(|| {
+        fusabi_host::Error::host_function("time.parse: missing time string argument")
+    })?;
 
     let _format_str = args
         .get(1)
@@ -147,8 +131,8 @@ pub mod duration {
 mod tests {
     use super::*;
     use fusabi_host::Capabilities;
-    use fusabi_host::{Sandbox, SandboxConfig};
     use fusabi_host::Limits;
+    use fusabi_host::{Sandbox, SandboxConfig};
 
     fn create_test_ctx() -> ExecutionContext {
         let sandbox = Sandbox::new(SandboxConfig::default()).unwrap();

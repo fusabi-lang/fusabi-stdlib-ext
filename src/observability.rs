@@ -232,8 +232,8 @@ mod tests {
 
     #[test]
     fn test_span_context() {
-        let span = SpanContext::new("test-span")
-            .with_attribute("key", Value::String("value".into()));
+        let span =
+            SpanContext::new("test-span").with_attribute("key", Value::String("value".into()));
 
         assert_eq!(span.name, "test-span");
         assert!(!span.trace_id.is_empty());
@@ -242,8 +242,8 @@ mod tests {
 
     #[test]
     fn test_log_entry() {
-        let entry = LogEntry::new(LogLevel::Info, "test message")
-            .with_field("count", Value::Int(42));
+        let entry =
+            LogEntry::new(LogLevel::Info, "test message").with_field("count", Value::Int(42));
 
         assert_eq!(entry.level, LogLevel::Info);
         assert_eq!(entry.message, "test message");

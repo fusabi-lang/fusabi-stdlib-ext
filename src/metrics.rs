@@ -15,29 +15,20 @@ static METRICS: once_cell::sync::Lazy<MetricsRegistry> =
     once_cell::sync::Lazy::new(MetricsRegistry::new);
 
 /// Increment a counter.
-pub fn counter_inc(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
+pub fn counter_inc(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
     let name = args
         .first()
         .and_then(|v| v.as_str())
         .ok_or_else(|| fusabi_host::Error::host_function("metrics.counter_inc: missing name"))?;
 
-    let value = args
-        .get(1)
-        .and_then(|v| v.as_int())
-        .unwrap_or(1);
+    let value = args.get(1).and_then(|v| v.as_int()).unwrap_or(1);
 
     METRICS.counter_inc(name, value as u64);
     Ok(Value::Null)
 }
 
 /// Set a gauge value.
-pub fn gauge_set(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
+pub fn gauge_set(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
     let name = args
         .first()
         .and_then(|v| v.as_str())
@@ -53,19 +44,17 @@ pub fn gauge_set(
 }
 
 /// Observe a histogram value.
-pub fn histogram_observe(
-    args: &[Value],
-    _ctx: &ExecutionContext,
-) -> fusabi_host::Result<Value> {
-    let name = args
-        .first()
-        .and_then(|v| v.as_str())
-        .ok_or_else(|| fusabi_host::Error::host_function("metrics.histogram_observe: missing name"))?;
+pub fn histogram_observe(args: &[Value], _ctx: &ExecutionContext) -> fusabi_host::Result<Value> {
+    let name = args.first().and_then(|v| v.as_str()).ok_or_else(|| {
+        fusabi_host::Error::host_function("metrics.histogram_observe: missing name")
+    })?;
 
     let value = args
         .get(1)
         .and_then(|v| v.as_float().or_else(|| v.as_int().map(|i| i as f64)))
-        .ok_or_else(|| fusabi_host::Error::host_function("metrics.histogram_observe: missing value"))?;
+        .ok_or_else(|| {
+            fusabi_host::Error::host_function("metrics.histogram_observe: missing value")
+        })?;
 
     METRICS.histogram_observe(name, value);
     Ok(Value::Null)
@@ -301,8 +290,8 @@ mod once_cell {
 mod tests {
     use super::*;
     use fusabi_host::Capabilities;
-    use fusabi_host::{Sandbox, SandboxConfig};
     use fusabi_host::Limits;
+    use fusabi_host::{Sandbox, SandboxConfig};
 
     fn create_test_ctx() -> ExecutionContext {
         let sandbox = Sandbox::new(SandboxConfig::default()).unwrap();
@@ -324,7 +313,11 @@ mod tests {
     fn test_gauge_set() {
         let ctx = create_test_ctx();
 
-        gauge_set(&[Value::String("test_gauge".into()), Value::Float(42.5)], &ctx).unwrap();
+        gauge_set(
+            &[Value::String("test_gauge".into()), Value::Float(42.5)],
+            &ctx,
+        )
+        .unwrap();
 
         let value = METRICS.gauge_get("test_gauge");
         assert!((value - 42.5).abs() < 0.001);
@@ -336,9 +329,13 @@ mod tests {
 
         for i in 1..=10 {
             histogram_observe(
-                &[Value::String("test_histogram".into()), Value::Float(i as f64)],
+                &[
+                    Value::String("test_histogram".into()),
+                    Value::Float(i as f64),
+                ],
                 &ctx,
-            ).unwrap();
+            )
+            .unwrap();
         }
 
         let stats = METRICS.histogram_stats("test_histogram").unwrap();
