@@ -34,8 +34,11 @@ net_http = ["dep:reqwest", "dep:tokio"]
 terminal-ui = ["dep:ratatui", "dep:crossterm"]
 observability = ["metrics", "dep:opentelemetry"]
 k8s = ["dep:kube", "dep:k8s-openapi", "dep:tokio"]
-mcp = ["dep:serde", "dep:serde_json"]
+mcp = ["dep:serde", "dep:serde_json", "serde-support"]
 sigilforge = ["dep:sigilforge-client", "dep:tokio"]
+
+# Serde support for JSON encoding/decoding
+serde-support = ["dep:serde", "dep:serde_json"]
 
 # Safety controls
 sandbox = []

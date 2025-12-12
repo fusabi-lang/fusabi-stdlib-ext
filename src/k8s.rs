@@ -2,12 +2,12 @@
 //!
 //! Provides access to Kubernetes resources and operations.
 
-use k8s_openapi::api::core::v1::{ConfigMap, Namespace, Pod, Secret, Service};
+use k8s_openapi::api::core::v1::{ConfigMap, Namespace, Pod, Secret};
 use kube::{
-    api::{Api, ListParams, PostParams},
+    api::{Api, ListParams},
     Client, Config,
 };
-use std::collections::{BTreeMap, HashMap};
+use std::collections::HashMap;
 
 use crate::error::{Error, Result};
 use fusabi_host::Value;
