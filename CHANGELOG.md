@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Verified
+- Verified compatibility with Fusabi VM 0.21.0
+- All 8 core modules tested and working:
+  - process - Process execution with safety controls
+  - fs - Filesystem operations
+  - path - Path manipulation utilities
+  - env - Environment variable access
+  - format - String formatting and JSON handling
+  - net - HTTP client operations
+  - time - Time and duration utilities
+  - metrics - Counter, gauge, and histogram metrics
+- All 59 unit tests pass successfully
+- No breaking changes required
+
 ## [0.1.6] - 2025-12-09
 
 ### Fixed
