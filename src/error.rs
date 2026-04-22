@@ -2,7 +2,7 @@
 
 use thiserror::Error;
 
-/// Result type alias using [`Error`].
+/// Result type alias using [`enum@Error`].
 pub type Result<T> = std::result::Result<T, Error>;
 
 /// Errors that can occur during stdlib operations.
