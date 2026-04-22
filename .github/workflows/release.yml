@@ -51,9 +51,25 @@ jobs:
         env:
           RUSTDOCFLAGS: -D warnings --cfg docsrs -A unexpected_cfgs -A rustdoc::broken_intra_doc_links
 
+  validate-aarch64:
+    name: Validate on aarch64 Linux
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dev deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libssl-dev pkg-config
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Check (all features)
+        run: cargo check --all-features
+      - name: Run tests
+        run: cargo test --all-features
+
   build:
     name: Build Release
-    needs: validate
+    needs: [validate, validate-aarch64]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
