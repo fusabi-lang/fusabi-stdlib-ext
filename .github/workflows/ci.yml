@@ -113,6 +113,26 @@ jobs:
           ! grep -r "](\.\..*MISSING" docs/ || (echo "Found broken links" && exit 1)
           echo "Link check passed!"
 
+  aarch64:
+    name: aarch64 Linux (native)
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dev deps
+        # libssl-dev + pkg-config cover reqwest's default native-tls backend,
+        # which is pulled in transitively by the `net` / `net_http` features.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libssl-dev pkg-config
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Check (default features)
+        run: cargo check
+      - name: Check (all features)
+        run: cargo check --all-features
+      - name: Test (default features)
+        run: cargo test
+
   msrv:
     name: MSRV (1.75)
     runs-on: ubuntu-latest
